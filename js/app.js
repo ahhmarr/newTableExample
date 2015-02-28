@@ -62,7 +62,6 @@ var finder=function(obj,filterText)
 					push=true;
 					field=field.replace(patt,function(match,token)
 					{
-						console.log(match);
 						return "<span class='match'>"+match+"</span>";
 					});
 					clone[i]=field;
