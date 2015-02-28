@@ -47,16 +47,25 @@ var generator=function(obj,tableID)
 var finder=function(obj,filterText)
 {
 	var newObj=[];
+	if(filterText=="")
+		return obj;
 	obj.forEach(function(e,r,b)
 	{
 		var push=false;
-		var clone=e;
+		var clone=Object.create(e);
 		for(var i in clone){
 				var field=clone[i].toString();
-				var match=field.match(new RegExp(filterText,"i"));
+				var patt=new RegExp(filterText,"ig");
+				var match=field.match(patt);
 				if(match!==null)
 				{
 					push=true;
+					field=field.replace(patt,function(match,token)
+					{
+						console.log(match);
+						return "<span class='match'>"+match+"</span>";
+					});
+					clone[i]=field;
 				}
 			}
 		if(push){
