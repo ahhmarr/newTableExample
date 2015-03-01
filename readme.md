@@ -1,8 +1,6 @@
 #Table Search
 
-Basic Searchable Table Using Vailla JavaScript
-
-Author 		ahmar.siddiqui <ahmar.siddiqui@gmail.com>
+Basic Searchable Table Using Vanilla JavaScript
 
 ##Usage
 
