@@ -45,12 +45,39 @@ var details=[
 		createTable();
 		document.getElementById("search-text")
 				.addEventListener("keyup",searchTable);
+		window.sort=sortColumn;
+		
 	}
+	var sortColumn=function(e)
+	{
+		var colIndex=(e.getAttribute("data-column"));
+		var order=(e.getAttribute("data-order")) || -1;
+		var newObj=_data;
+		document.getElementById("search-text").value="";
+		for(ii=0;ii<newObj.length-1;ii++){
+			for(jj=ii+1;jj<newObj.length;jj++){
+				var first=ii;second=jj;
+				if(order==-1)
+				{
+					first=jj;second=ii;
+				}
+				if(newObj[first][colIndex]<newObj[second][colIndex]){
+					var swap=newObj[first];
+					newObj[first]=newObj[second];
+					newObj[second]=swap;
+				}
+			}
+		}
+		createTable(newObj,{
+			col : colIndex,
+			sortOrder : (order==-1)?1:-1
+		});
+	};
 	var getData=function()
 	{
 		return _data;
 	};
-	var createTable=function(data)
+	var createTable=function(data,sort)
 	{
 		data=data || _data;
 		table=_table.cloneNode();
@@ -60,7 +87,15 @@ var details=[
 		var tr=_tr.cloneNode();
 		for(var i in headings){
 			var th=_th.cloneNode();
-			th.innerText=i;
+			th.innerHTML=i+"<img src='images/up.png'><img src='images/down.png' >";
+			th.setAttribute("class","sort-column");
+			th.setAttribute("data-column",i);
+			if(typeof sort=="object" && (sort.col)==i){
+				th.setAttribute("data-order",sort.sortOrder);
+			}
+			else
+				th.setAttribute("data-order","");
+			th.setAttribute("onclick","sort(this)");
 			tr.appendChild(th);
 		}
 		table.appendChild(tr);
