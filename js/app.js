@@ -30,58 +30,89 @@ var details=[
 		occupation:"clerk"
 	}
 ];
-var generator=function(obj,tableID)
+
+(function()
 {
-	var table="<table border='1'><tr><th>sn</th><th>name</th><th>age</th><th>occupation</th></tr>";
-	obj.forEach(function(e,r,b)
+	var _data,_table,_tr,_td,_th,_target;
+	var init=function(data)
 	{
-		var td="<tr><td>"+e.id+"</td>";
-		td+="<td>"+e.name+"</td>";
-		td+="<td>"+e.age+"</td>";
-		td+="<td>"+e.occupation+"</td></tr>";
-		table+=td;
-	});
-	table+="</table>";
-	document.getElementById(tableID).innerHTML=table;
-};
-var finder=function(obj,filterText)
-{
-	var newObj=[];
-	if(filterText=="")
-		return obj;
-	obj.forEach(function(e,r,b)
+		_data=data||{};
+		_table=document.createElement("table");
+		_tr=document.createElement("tr");
+		_td=document.createElement("td");
+		_th=document.createElement("th");
+		_target=document.getElementById("table-wrapper");
+		createTable();
+		document.getElementById("search-text")
+				.addEventListener("keyup",searchTable);
+	}
+	var getData=function()
 	{
+		return _data;
+	};
+	var createTable=function(data)
+	{
+		data=data || _data;
+		table=_table.cloneNode();
+		table.border=1;
+		var headings=data[0] || _data[0];
+		//creating headers
+		var tr=_tr.cloneNode();
+		for(var i in headings){
+			var th=_th.cloneNode();
+			th.innerText=i;
+			tr.appendChild(th);
+		}
+		table.appendChild(tr);
+		//creating rows
+		data.forEach(function(obj)
+		{
+			var tr=_tr.cloneNode();
+			for(i in obj){
+				var td=_td.cloneNode();
+				td.innerHTML=obj[i];
+				tr.appendChild(td);
+			}
+			table.appendChild(tr);
+
+		});
+		_target.innerHTML='';
+		_target.appendChild(table);
+	};
+	var searchTable=function(event)
+	{
+		var data=_data;
+		filterText=(this.value); 
+		if(filterText.replace(/ /g,"")==="")
+			return createTable(_data);
 		var push=false;
-		var clone=Object.create(e);
-		for(var i in clone){
-				var field=clone[i].toString();
-				var patt=new RegExp(filterText,"ig");
-				var match=field.match(patt);
-				if(match!==null)
-				{
-					push=true;
-					field=field.replace(patt,function(match,token)
+		var result=[];
+		data.forEach(function(e)
+		{
+			var pat=new RegExp(filterText,"ig");
+			var obj=Object.create(e);
+			var push=false;
+			for(var i in obj){
+				 //if not changed 
+				 //and saved and on modification will create another object attribute
+				obj[i]=obj[i].toString();
+				field=obj[i];
+				var match=field.match(pat,filterText);
+				if(match!==null){
+					field=field.replace(pat,function(match,token)
 					{
 						return "<span class='match'>"+match+"</span>";
 					});
-					clone[i]=field;
+					obj[i]=field;
+					push=true;
 				}
 			}
-		if(push){
-			newObj.push(clone);
-		}
-	});
-	return newObj;
-};
-var search=function(e)
-{
-	var text=(this.value);
-	var found=finder(details,text);
-	generator(found,"table-wrapper");
-};
-window.onload=function()
-{
-	generator(details,"table-wrapper");
-	document.getElementById("search-text")
-			.addEventListener("keyup",search);
-};
+			if(push){
+				result.push(obj);
+			}
+		});
+		createTable(result);
+	}
+	init(details);
+
+})();
