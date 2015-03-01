@@ -4,7 +4,7 @@ Basic Searchable Table Using Vanilla JavaScript
 
 ##Usage
 
-add these style rules in you stylesheet
+add the following style rules in you stylesheet &
 import images up.png and down.png to your images folder
 
 ```
